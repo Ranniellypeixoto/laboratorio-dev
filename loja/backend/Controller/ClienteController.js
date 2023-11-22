@@ -11,7 +11,7 @@ import {
   editarCliente
 } from '../services/ClienteService.js'
 
-router.use(AuthorizationMiddleware);
+// router.use(AuthorizationMiddleware);
 
 router.post('/cadastrar', async function (request, responce) {
   const cliente = request.body

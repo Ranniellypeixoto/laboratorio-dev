@@ -2,7 +2,6 @@ import {createWebHistory, createRouter} from "vue-router";
 import CadastrarCliente from "./components/clientes/CadastrarCliente.vue"
 import EditarCliente from "./components/clientes/EditarCliente.vue"
 import ListarCliente from "./components/clientes/ListarCliente.vue"
-import DeletarCliente from "./components/clientes/CadastrarCliente.vue"
 
 import CadastrarFornecedor from "./components/fornecedores/CadastrarFornecedor.vue"
 import EditarFornecedor from "./components/fornecedores/EditarFornecedor.vue"

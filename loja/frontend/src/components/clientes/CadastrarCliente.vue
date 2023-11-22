@@ -1,9 +1,7 @@
 <template>
     <div class="formularioClientes">
         <h3>Cadastro de cliente</h3>
-        <p>
-            {{ notificacao }}
-        </p>
+
         <label>Nome</label>
         <input name="nome" v-model="cliente.nome" />
 
@@ -33,53 +31,55 @@
     
 <script>
 
-import axios from 'axios'
-
-const brasilApi = axios.create({
-    baseURL: "https://brasilapi.com.br/api",
-    headers: {
-        'Content-Type': 'application/json'
-    }
-})
-
-const minhaApi = axios.create({
-    baseURL: "http://localhost:3000",
-    headers: {
-        'Content-Type': 'application/json'
-    }
-})
-
+import { mapState, mapActions, mapGetters } from 'vuex';
 export default {
     name: "CadastrarCliente",
-    data() {
-        return {
-            cliente: {
-                nome: null,
-                email: null,
-                cpf: null,
-                endereco: {
-                    cep: null,
-                    endereco: null,
-                    uf: null,
-                    complemento: null
-                }
-            },
-            notificacao: null
-        }
+    computed: {
+        ...mapState("cliente", ["cliente", "cpfInvalido"]),
+        ...mapGetters("cliente", ["cliente"]),
     },
     methods: {
-        async cadastrar() {
-            const responce = await minhaApi.post("/cliente/cadastrar", this.cliente)
-            this.notificacao = responce.data
-        },
-        async buscarCep() {
-            const responce = await brasilApi.get(`/cep/v1/${this.cliente.cep}`)
-            this.cliente.uf = responce.data.state
-            const rua = responce.data.street == null ? "" : responce.data.street
-            this.cliente.endereco = `${rua}, ${responce.data.neighborhood}, ${responce.data.city}`
+        ...mapActions("cliente", ["cadastrar", "validaCPF", "isValidCPF", "Verificar", "buscarCep"])
+        /*
+    validaCPF() {
+      if (this.cliente.cpf) {
+        const cpf = this.cliente.cpf.replace(/[^\d]+/g, '');
+        if (cpf.length !== 14 || !this.isValidCPF(cpf)) {
+          this.cpfInvalido = true;
+        } else {
+          this.cpfInvalido = false;
         }
+      }
+    },
+    isValidCPF(cpf) {
+      function validaCPF(cpf) {
+        var b = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+        var c = String(cpf).replace(/[^\d]/g, '')
+
+        if (c.length !== 14)
+          return false
+
+        if (/0{14}/.test(c))
+          return false
+
+        for (var i = 0, n = 0; i < 12; n += c[i] * b[++i]);
+        if (c[12] != (((n %= 11) < 2) ? 0 : 11 - n))
+          return false
+
+        for (var i = 0, n = 0; i <= 12; n += c[i] * b[i++]);
+        if (c[13] != (((n %= 11) < 2) ? 0 : 11 - n))
+          return false
+
+        return true
+      }
+
+      return validaCPF(cpf);
+    },
+    Verificar() {
+      this.resultadoValidacao = this.isValidCPF(this.cpfToValidate) ? "Válido" : "Inválido";
+    }*/
+        },
     }
-}
 </script>
 
 <style>

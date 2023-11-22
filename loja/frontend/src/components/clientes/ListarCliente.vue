@@ -2,9 +2,6 @@
     <h3>Clientes Cadastrados</h3>
     <a href="/clientes/cadastrar">Cadastrar</a>
     <br>
-
-    <p>{{ mensagem }}</p>
-
     <table width="100%">
         <thead>
             <th>Nome</th>
@@ -40,27 +37,19 @@ const minhaApi = axios.create({
     }
 })
 
+import { useStore, mapGetters, mapActions } from "vuex"
+
 export default {
     name: "ListarCliente",
-    data() {
-        return {
-            clientes: [],
-            mensagem: null
-        }
+    setup: () => {
+        const store = useStore()
+        store.dispatch("cliente/listar")
     },
-    async mounted() {
-        this.listar()
+    computed: {
+        ...mapGetters("cliente", ["clientes"]),
     },
     methods: {
-        async listar() {
-            const responce = await minhaApi.get("/cliente/")
-            this.clientes = responce.data
-        },
-        async deletar(id) {
-            const responce = await minhaApi.delete(`/cliente/${id}`)
-            this.mensagem = responce.data
-            this.listar()
-        },
+        ...mapActions("cliente", ["deletar"]),
         async editar(id) {
             this.$router.push(`/clientes/${id}`)
         }

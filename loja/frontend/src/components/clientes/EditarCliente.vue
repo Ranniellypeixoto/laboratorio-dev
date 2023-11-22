@@ -35,13 +35,6 @@
 
 import axios from 'axios'
 
-const brasilApi = axios.create({
-    baseURL: "https://brasilapi.com.br/api",
-    headers: {
-        'Content-Type': 'application/json'
-    }
-})
-
 const minhaApi = axios.create({
     baseURL: "http://localhost:3000",
     headers: {
@@ -70,18 +63,49 @@ export default {
         const responce = await minhaApi.get(`/cliente/${this.id}`)
         this.cliente = responce.data
     },
-    methods: { 
+    methods: {
         async salvarEdicao() {
             const responce = await minhaApi.put(`/cliente/${this.id}`, this.cliente)
             this.notificacao = responce.data
         },
-        async buscarCep() {
-            const responce = await brasilApi.get(`/cep/v1/${this.cliente.cep}`)
-            this.cliente.uf = responce.data.state
-            const rua = responce.data.street == null ? "" : responce.data.street
-            this.cliente.endereco = `${rua}, ${responce.data.neighborhood}, ${responce.data.city}`
+        validaCPF() {
+            if (this.cliente.cpf) {
+                const cpf = this.cliente.cpf.replace(/[^\d]+/g, '');
+                if (cpf.length !== 14 || !this.isValidCPF(cpf)) {
+                    this.cpfInvalido = true;
+                } else {
+                    this.cpfInvalido = false;
+                }
+            }
+        },
+        isValidCPF(cpf) {
+            function validaCPF(cpf) {
+                var b = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+                var c = string(cpf).replace(/[^\d]/g, '')
+
+                if (c.length !== 14)
+                    return false
+
+                if (/0{14}/.test(c))
+                    return false
+
+                for (var i = 0, n = 0; i < 12; n += c[i] * b[++i]);
+                if (c[12] != (((n %= 11) < 2) ? 0 : 11 - n))
+                    return false
+
+                for (var i = 0, n = 0; i <= 12; n += c[i] * b[i++]);
+                if (c[13] != (((n %= 11) < 2) ? 0 : 11 - n))
+                    return false
+
+                return false
+            }
+
+            return validaCPF(cpf);
+        },
+        Verificar() {
+            this.resultadoValidacao = this.isValidCPF(this.cpfToValidate) ? "Válido" : "Inválido";
         }
-    }
+    },
 }
 </script>
 
